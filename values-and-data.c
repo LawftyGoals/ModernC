@@ -2,11 +2,6 @@
 #include <stdint.h>
 #include <limits.h>
 
-#if UULONG_WIDTH < UINT128_WIDTH
-typedef uint128_t wideType;
-#else
-typedef unsigned long long wideType;
-#endif
 
 enum corvid {magpie, raven, jay, chough, corvid_num};
 #define FLOCK_MAGPIE  (1U << magpie)
@@ -19,6 +14,8 @@ enum corvid {magpie, raven, jay, chough, corvid_num};
 int main() {
 unsigned flock = FLOCK_EMPTY;
 
+constexpr unsigned _BitInt(3) max3u = -1wbu;
+
 if(true) flock |= FLOCK_JAY;
 
 if(flock&FLOCK_JAY) printf("should print jay: %u\n", flock);
@@ -26,6 +23,8 @@ if(flock&FLOCK_JAY) printf("should print jay: %u\n", flock);
 if(flock&FLOCK_CHOUGH) printf("should not print chough: %u\n", flock);
 
 printf("testing bitshift 4>>2: %u\n", (unsigned)4>>2);
+
+printf("_BitInt(3) = -1 test: %u\n", max3u);
 
 unsigned short As = 0b00000000'10000000;
 printf("test signed: %hd\n", (signed short)As<<8);

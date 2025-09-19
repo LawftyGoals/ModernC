@@ -1,7 +1,7 @@
 # https://cs.colby.edu/maxwell/courses/tutorials/maketutor/
 # IDIR =../include
-CC=gcc
-CFLAGS=-I. -std=c2x
+CC=gcc-14
+CFLAGS=-I. -std=c2x -Wall
 
 values-and-data : values-and-data.o
 	$(CC) -o values-and-data values-and-data.o 
