@@ -3,11 +3,13 @@
 #endif
 #define TWOS_COMPLEMENT 1
 
+#include <ctype.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <stdckdint.h>
+#include <string.h>
 
 double my_strtod(char *s){
   double beforePeriod = 0.0;
@@ -81,6 +83,18 @@ void delay(double secs) {
   }
 }
 
+static_assert('z'-'a' == 25, "alphabetic characters not contiguous");
+
+unsigned hexatridecimal(int a) {
+  if(isdigit(a)) {
+    return a-'0';
+  } else {
+    a = toupper(a);
+    return (isupper(a)) ? 10 + (a - 'A') : -1;
+  }
+}
+
+
 int main(int argc, char* argv[argc+1]) {
   printf("twos %d\n", TWOS_COMPLEMENT);
   my_strtod("-10523.0203");
@@ -117,6 +131,15 @@ int main(int argc, char* argv[argc+1]) {
   fputs("\n", stdout);
   fputs("You did ignore me, so bye\n", stdout);
 
+
+  char tz[] = "0x4444";
+
+  char tz3[] = {tz[0], tolower(tz[1]), '\0'};
+
+  bool isOx = tz[0] == '0' && tolower(tz[1]) == 'x';
+
+
+  printf("find_prefix: %s\nsecondtestprefix%s\n", strcmp(tz3, "0x") == 0 ? "true" : "false", isOx ? "true": "false");
   return EXIT_SUCCESS;
 }
 
