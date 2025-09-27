@@ -3,6 +3,8 @@
 #endif
 #define TWOS_COMPLEMENT 1
 
+#include <time.h>
+#include <stdint.h>
 #include <ctype.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -100,6 +102,12 @@ int main(int argc, char* argv[argc+1]) {
   my_strtod("-10523.0203");
   printf("%s, %d\n", argv[0], argc);
   
+  struct timespec ts;
+  timespec_get(&ts, TIME_UTC);
+  char buff[100];
+  strftime(buff, sizeof buff, "%D %T", gmtime(&ts.tv_sec));
+  printf("raw timespec.tv_nsec: %09ld\n", ts.tv_nsec);
+
   test_int_arith();
   manual_puts("testing this");
 
@@ -140,6 +148,12 @@ int main(int argc, char* argv[argc+1]) {
 
 
   printf("find_prefix: %s\nsecondtestprefix%s\n", strcmp(tz3, "0x") == 0 ? "true" : "false", isOx ? "true": "false");
+  timespec_get(&ts, TIME_UTC);
+  printf("current time: %s.%09ld UTC\n", buff, ts.tv_nsec);
+  printf("raw timepsec.tv_sec: %jd\n", (intmax_t)ts.tv_sec);
+  printf("raw timespec.tv_nsec: %09ld\n", ts.tv_nsec);
+
+
   return EXIT_SUCCESS;
 }
 
