@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 
 void double_swap(double *p0, double *p1, double *p2) {
@@ -33,11 +34,54 @@ double sum_dub_arr3(size_t len, double const* a) {
   return ret;
 }
 
+double sum_reverse_arr(size_t len, double const* a) {
+  double ret = 0.0;
+  double const* p = a + len-1;
+  do {
+    ret += *p;
+    --p;
+  } while (p >= a);
+  return ret;
+}
+
 void printarr(size_t len, double* thearr){
   for(size_t i = 0; i < len; i++) {
       printf("dub%ld: %f, ", i, *(thearr + i));
   } printf("\n");
 }
+
+double memory_arr(size_t len, double const* a) {
+  double ret = 0.0;
+  for(size_t i = 0; i < len; i++){
+    ret += *(a+i);
+  }
+  return ret;
+}
+
+double memory_arr2(size_t len, double const* a) {
+  double ret= 0.0;
+  for(double const* p = a; p < (a + len); ++p){
+    ret += *p;
+  }
+  return ret;
+}
+
+double sum4(size_t len, double const* a){
+  double ret = 0.0;
+  double const* p = a+len-1;
+  do {
+    if (isinf(*p)) {
+      fprintf(stderr, "element %tu of array at %p is infinite\n",
+          p-a,
+          (void*)a);
+      return *p;
+    }
+    ret += *p;
+    --p;
+  } while (p >= a);
+  return ret;
+}
+
 
 int main(int argc, char *argv[argc+1]){
 
@@ -60,5 +104,19 @@ int main(int argc, char *argv[argc+1]){
   printarr(arr_len, dub_arr);
   printarr(3, &dub_arr[1]);
 
+  printf("sumreversearr: %f\n", sum_reverse_arr(arr_len, dub_arr));
+  
+  printf("memarr: %f\n", memory_arr(arr_len, dub_arr));
+  printf("memarr2: %f\n", memory_arr2(arr_len, dub_arr));
+  printf("sum4: %f\n", sum4(arr_len, dub_arr));
+
+  double A[4] = { 0.0, 1.0, 2.0, -3.0};
+  double* p = &A[1];
+  double* q = &A[3];
+  //assert(p-q == -2);
+
+  char boi[] = "boiiii";
+
+  printf("point cons: %f, %f, sum: %f, %s\n", *p, *q, *p-*q, boi);
   return EXIT_SUCCESS;
 }
