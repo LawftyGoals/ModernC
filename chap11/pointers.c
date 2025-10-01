@@ -1,6 +1,15 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <math.h>
 #include <stdlib.h>
+
+struct buffy {
+  char name[16];
+  uint8_t age;
+};
+
+typedef struct buffy buffy;
 
 void double_swap(double *p0, double *p1, double *p2) {
   auto tmp = *p0;
@@ -117,6 +126,24 @@ int main(int argc, char *argv[argc+1]){
 
   char boi[] = "boiiii";
 
-  printf("point cons: %f, %f, sum: %f, %s\n", *p, *q, *p-*q, boi);
+  ptrdiff_t diffptr = *p-*q;
+  printf("point cons: %f, %p, sum: %ld, %s\n", *p, (void*)q, diffptr, boi);
+
+  char name[] = "Beenjamin";
+  char const* nameptr = nullptr;
+  nameptr = name;
+
+  size_t testint = 123;
+  size_t const* testintptr = nullptr;
+  testintptr = &testint;
+
+  printf("name: %s, int: %ld\n", nameptr, *testintptr);
+
+  buffy buffy1 = { .name = "buffy", .age = 18 };
+
+  struct buffy const* buffyptr = &buffy1;
+
+  printf("pointer to buffys->name: %s, pointer to buffys->age: %u\n", buffyptr->name, buffyptr->age);
+
   return EXIT_SUCCESS;
 }
