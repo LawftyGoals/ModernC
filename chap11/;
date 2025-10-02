@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <math.h>
@@ -92,10 +91,9 @@ double sum4(size_t len, double const* a){
   return ret;
 }
 
+char const* intostr(size_t start){
 
-void intostr(size_t start, char strptr[]){
-
-  if(start == 0) strcpy(strptr, "0");
+  if(start == 0) return "0"
 
   size_t size = 0;
   size_t counter = start;
@@ -106,13 +104,13 @@ void intostr(size_t start, char strptr[]){
 
   size_t working = start;
   char ret[size+1];
-  for(size_t i = size; i > 0; --i){
-    char workChar = (working % 10) + '0';
-    ret[i-1] = workChar;
+  for(size_t i = 0; i < size; ++i){
+    char workChar = (char)(working % 10);
+    ret[i] = workChar;
     working /= 10;
   }
   ret[size] = '\0';
-  strcpy(strptr, ret);
+  return ret;
 }
 
 int main(int argc, char *argv[argc+1]){
@@ -167,14 +165,6 @@ int main(int argc, char *argv[argc+1]){
   struct buffy const* buffyptr = &buffy1;
 
   printf("pointer to buffys->name: %s, pointer to buffys->age: %u\n", buffyptr->name, buffyptr->age);
-
-  char test12[256]; 
-  intostr(128, test12);
-
-  printf("intostr: %s\n", test12);
-
-  size_t boo[] = {1, 2, 3, 4};
-  printf("size_t: %lu\n" , boo[3]);
 
   return EXIT_SUCCESS;
 }
