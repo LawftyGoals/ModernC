@@ -93,7 +93,7 @@ double sum4(size_t len, double const* a){
 }
 
 
-void intostr(size_t start, char strptr[]){
+void intostr(size_t start, char strptr[start]){
 
   if(start == 0) strcpy(strptr, "0");
 
@@ -114,6 +114,8 @@ void intostr(size_t start, char strptr[]){
   ret[size] = '\0';
   strcpy(strptr, ret);
 }
+
+
 
 int main(int argc, char *argv[argc+1]){
 
