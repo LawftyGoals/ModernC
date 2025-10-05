@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define MAXLINE 1000
-
+const int TABWIDTH = 8;
 int tabreplace(char line[MAXLINE]);
 
 int main() {
@@ -28,8 +28,8 @@ int tabreplace(char s[MAXLINE]){
     
     if(c == '\t') {
       int j;
-      int mod = i % 8; 
-      for(j = 0; j < (mod ? 8 - mod : 8); ++j){
+      int mod = i % TABWIDTH; 
+      for(j = 0; j < (mod ? TABWIDTH - mod : TABWIDTH); ++j){
         s[i] = ' ';
         ++i;
       }
