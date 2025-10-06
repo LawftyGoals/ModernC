@@ -3,6 +3,8 @@
 #define TABWIDTH 8
 
 int main() {
+  unsigned bob = 0;
+  printf("%d", bob-1);
   char c;
   int pos;
   int nb = 0;
