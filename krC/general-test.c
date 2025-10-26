@@ -4,7 +4,7 @@
 
 
 
-int main () {
+int main (void) {
 
   int minmax = INT_MIN;
   unsigned maxmax = minmax;
@@ -26,6 +26,8 @@ int main () {
   char s3[] = "buddy, you ain't got what I need for sure. You just a chump, a regular two dime buffoon.";
 
   printf("idx of last 't': %d\n", strindex(s3, "two"));
+
+  printf("atof: %f\n", atof("      -123.4E-6"));
 
   return 0;
 }
