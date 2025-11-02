@@ -1,6 +1,7 @@
 #include "custom-functions.h"
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 void itoa(int n, char s[]){
   int i, sign;
@@ -70,7 +71,7 @@ int strindex(char s[], char t[]) {
   return ret;
 }
 
-double atof(char s[]){
+double custom_atof(char s[]){
   double val, power;
   int i, sign;
   for(i = 0; isspace(s[i]); i++) ;
@@ -123,5 +124,122 @@ double atof(char s[]){
 
 
   return val;
+}
+
+
+
+int reverse_polish(void) {
+  char s1[MAXOP];
+  int type;
+  double op2, op1;
+
+  while((type = getop(s1)) != EOF) {
+    
+    switch(type) {
+      case NUMBER:
+        push(atof(s1));
+        break;
+      case '+':
+        push(pop() + pop());
+        break;
+      case '*':
+        push(pop() * pop());
+        break;
+      case '-':
+        op2 = pop();
+        push(pop() - op2);
+        break;
+      case '/':
+        op2 = pop();
+        if (op2 !=0.0) push(pop() / op2);
+        else printf("error: zero divisor\n");
+        break;
+      case '%':
+        op2 = pop();
+        if(op2 != 0.0) push((unsigned)pop() % (unsigned)op2);
+        else printf("error: modulo by zero\n");
+        break;
+      case '?': //Print top element of stack
+        op2 = pop();
+        printf("\t%.8g\n", op2);
+        push(op2);
+        break;
+      case 'd': // duplicate top stack element
+        op2 = pop();
+        push(op2);
+        push(op2);
+        break;
+      case 's': // swap top elements on stack
+        op1 = pop();
+        op2 = pop();
+        push(op1);
+        push(op2);
+        break;
+      case 'c': // clears the stack.
+        clear();
+        break;
+      case '\n':
+        printf("\t%.8g\n", pop());
+        break;
+      default:
+        printf("error: unknown command %s\n", s1);
+        break;
+    }
+  }
+  return 0;
+}
+
+int sp = 0;
+double val[MAXOP];
+
+void push(double f) {
+  if(sp < MAXOP) val[sp++] = f;
+  else printf("error: stack full, can't push %g\n", f);
+}
+
+double pop(void) {
+  if(sp>0) return val[--sp];
+  else {
+    printf("error: stack empty\n");
+    return 0.0;
+  }
+}
+
+void clear(){
+  for(int i = 0; i <= sp; i++) val[i] = 0;
+  sp = 0;
+}
+
+int getop(char s[]) {
+  int i;
+  char c;
+  while ((s[0] = c = getch()) == ' ' || c == '\t');
+
+  s[1] = '\0';
+  int isDigit = isdigit(c);
+  if (!isDigit && c != '.' && c != '-') return c;
+
+  i = 0;
+  if(c == '-') while(isdigit(s[++i] = c = getch()));
+
+  if (isDigit) while(isdigit(s[++i] = c = getch()));
+
+  if(c == '.') while(isdigit(s[++i] = c = getch()));
+
+  s[i] = '\0';
+  if(c != EOF) ungetch(c);
+  
+  return NUMBER;
+}
+
+char buf[MAXOP];
+int bufp = 0;
+int getch(void) {
+  return (bufp > 0) ? buf[--bufp] : getchar();
+}
+
+void ungetch(int c) {
+  if(bufp >= MAXOP) printf("ungetch: too many characters \n");
+  else buf[bufp++] = c;
 }
 

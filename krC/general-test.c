@@ -27,7 +27,9 @@ int main (void) {
 
   printf("idx of last 't': %d\n", strindex(s3, "two"));
 
-  printf("atof: %f\n", atof("      -123.4E-6"));
+  printf("atof: %f\n", custom_atof("      -123.4E-6"));
+
+  reverse_polish();
 
   return 0;
 }
