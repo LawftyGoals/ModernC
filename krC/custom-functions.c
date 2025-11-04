@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
 void itoa(int n, char s[]){
   int i, sign;
@@ -130,8 +132,10 @@ double custom_atof(char s[]){
 
 int reverse_polish(void) {
   char s1[MAXOP];
-  int type;
+  int type, varType = 0;
   double op2, op1;
+  double variables[26];
+  for(int i = 0; i < 26; i++) variables[i] = 0.0;
 
   while((type = getop(s1)) != EOF) {
     
@@ -178,13 +182,23 @@ int reverse_polish(void) {
       case 'c': // clears the stack.
         clear();
         break;
+      case NAME:
+        mathfunc(s1);
+        break;
+      case '=':
+        pop();
+        if(varType >= 'A' && varType <= 'Z') variables[varType - 'A'] = pop();
+        else printf("error: no variable name\n");
+        break;
       case '\n':
         printf("\t%.8g\n", pop());
         break;
       default:
-        printf("error: unknown command %s\n", s1);
+        if(type >= 'A' && type <= 'Z') push(variables[type - 'A']);
+        else printf("error: unknown command %s\n", s1);
         break;
     }
+    varType = type;
   }
   return 0;
 }
@@ -217,9 +231,21 @@ int getop(char s[]) {
 
   s[1] = '\0';
   int isDigit = isdigit(c);
-  if (!isDigit && c != '.' && c != '-') return c;
 
   i = 0;
+  if(islower(c)){
+    while(islower(s[++i] = c = getch()));
+
+    s[i] = '\0';
+    if(c != EOF) ungetch(c);
+
+    if(strlen(s) > 1) return NAME;
+
+    else return c;
+ }
+
+  if (!isDigit && c != '.' && c != '-') return c;
+
   if(c == '-') while(isdigit(s[++i] = c = getch()));
 
   if (isDigit) while(isdigit(s[++i] = c = getch()));
@@ -232,14 +258,65 @@ int getop(char s[]) {
   return NUMBER;
 }
 
-char buf[MAXOP];
+char line[MAXOP];
+
+int getop(char s[]){
+  if(getline(line, MAXOP) < 1) return EOF;
+
+
+
+
+
+/*
+int buf[MAXOP];
 int bufp = 0;
+*/
+int buffered = 0;
+/*
 int getch(void) {
   return (bufp > 0) ? buf[--bufp] : getchar();
 }
+*/
+int getch(void){
+  int c;
+  if(buffered != 0){
+    c = buffered;
+    buffered = 0;
+  } else c = getchar();
+  return c;
+}
 
+void ungetch(int c){
+  if(buffered != 0) printf("Error: Too many chars on buffer");
+  else bufferd = c;
+}
+/*
 void ungetch(int c) {
   if(bufp >= MAXOP) printf("ungetch: too many characters \n");
   else buf[bufp++] = c;
+}*/
+
+void ungets(char s[]){
+  size_t len = strlen(s);
+  while(len > 0) ungetch(s[--len]);
+}
+
+void mathfunc(char s[]){
+  double op2;
+  double op1;
+  if(strcmp(s, "sin") == 0) {
+    push(sin(pop()));
+  } else if (strcmp(s, "cos") == 0) {
+    push(cos(pop()));
+  } else if (strcmp(s, "exp") == 0) {
+    push(exp(pop()));
+  } else if(strcmp(s, "pow") == 0) {
+    op2 = pop();
+    op1 = pop();
+    push(pow(op1, op2));
+  } else {
+    printf("error: %s not supported.\n", s);
+  }
+
 }
 

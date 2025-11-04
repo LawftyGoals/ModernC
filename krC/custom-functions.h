@@ -2,6 +2,7 @@
 #define CUSTOM_ITOA_H_
 #define MAXOP 100
 #define NUMBER '0'
+#define NAME 'n'
 
 int strindex(char *, char *);
 
@@ -23,5 +24,7 @@ int reverse_polish(void);
 int getch(void);
 void ungetch(int);
 
+
+void mathfunc(char[]);
 
 #endif
