@@ -25,7 +25,22 @@ int main(void)
 
   printf("atof: %f\n", custom_atof("      -123.4E-6"));
 
-  reverse_polish();
+  //reverse_polish();
+
+  char s4[] = "bots";
+  recverse(s4);
+  printf("%s\n", s4);
+
+  char s5[4];
+  itoa_rec(-10, s5);
+  printf("%s\n", s5);
+
+  int a = 6;
+  int b = -7;
+  
+  swap(int, a, b);
+
+  printf("a(6):%d b(-7):%d\n", a, b);
 
   return 0;
 }

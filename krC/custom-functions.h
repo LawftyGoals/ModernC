@@ -3,6 +3,10 @@
 #define MAXOP 100
 #define NUMBER '0'
 #define NAME 'n'
+#define swap(t, x, y) { \
+  t z = x; \
+  x = y; \
+  y = z; }
 
 int strindex(char *, char *);
 
@@ -11,6 +15,7 @@ void itob(int, char *, int);
 void itoa(int n, char s[]);
 
 void reverse(char s[]);
+void recverse(char[]);
 
 double custom_atof(char *);
 
@@ -26,5 +31,7 @@ void ungetch(int);
 
 
 void mathfunc(char[]);
+
+void itoa_rec(signed, char[]);
 
 #endif

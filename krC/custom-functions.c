@@ -260,12 +260,6 @@ int getop(char s[]) {
 
 char line[MAXOP];
 
-int getop(char s[]){
-  if(getline(line, MAXOP) < 1) return EOF;
-
-
-
-
 
 /*
 int buf[MAXOP];
@@ -288,7 +282,7 @@ int getch(void){
 
 void ungetch(int c){
   if(buffered != 0) printf("Error: Too many chars on buffer");
-  else bufferd = c;
+  else buffered = c;
 }
 /*
 void ungetch(int c) {
@@ -319,4 +313,84 @@ void mathfunc(char s[]){
   }
 
 }
+
+
+int getline(char[], int);
+/*
+int getopwgetline(char s[]){
+  int sizedline, i;
+  char c;
+  if(line[lineIndex] == '\0'){
+    if((sizedline = getline(line, MAXOP)) < 1) return EOF;
+    else lineIndex = 0;
+  }
+
+  while((s[0] = c = line[lineIndex++]) == ' ' || c == '\t');
+
+  s[1] = '\0';
+  bool isDigit = isdigit(c);
+  if(!isDigit && c != '.') return c;
+  i = 0;
+  
+  if(isDigit) while(isdigit(s[++i] = c = line[lineIndex++]));
+
+
+  if(c == '.') while(isdigit(s[++i] = c = line[lineIndex++]));
+
+  s[i] = '\0';
+  lineIndex--;
+
+  return NUMBER;
+}
+*/
+
+int getline(char s[], int lim) {
+  char c;
+  int i;
+  for (i = 0; i < lim-1 && (c = getchar()) != EOF && c != '\n'; i++){
+    s[i] = c;
+  }
+  if(c == '\n') {
+    s[i] = c;
+    i++;
+  }
+  s[i] = '\0';
+  
+  return i;
+}
+
+size_t recurser(char[], size_t);
+
+void recverse(char s[]) {
+
+  recurser(s, 0);
+}
+
+size_t recurser(char s[], size_t i) {
+  char c = s[i];
+  if(c == '\0') return i - 1;
+  
+  size_t end = recurser(s, i+1);
+
+  s[end - i] = c;
+  
+  return end;
+}
+
+
+void itoa_rec(signed n, char s[]){
+  static size_t i;
+  if (n / 10){
+    itoa_rec(n / 10, s);
+  } else{
+    i = 0;
+    if(n < 0){
+      s[i++] = '-';
+    }
+  }
+  s[i++] = abs(n) % 10 + '0';
+  s[i] = '\0';
+}
+
+
 
