@@ -41,6 +41,26 @@ int main(void)
   swap(int, a, b);
 
   printf("a(6):%d b(-7):%d\n", a, b);
+/*
+  int t1;
+
+  getint(&t1);
+
+  printf("%d\n", t1);
+*/
+  double t2;
+
+  getFloat(&t2);
+
+  printf("%f\n", t2);
+
+  char strcat1[11] = "teddy";
+  char strcat2[] = "bear";
+
+  new_strcat(strcat1, strcat2);
+
+  printf("new_strcat: %s\n", strcat1);
+
 
   return 0;
 }

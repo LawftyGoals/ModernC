@@ -261,16 +261,17 @@ int getop(char s[]) {
 char line[MAXOP];
 
 
-/*
+
 int buf[MAXOP];
 int bufp = 0;
-*/
-int buffered = 0;
-/*
+
+//int buffered = 0;
+//
+
 int getch(void) {
   return (bufp > 0) ? buf[--bufp] : getchar();
 }
-*/
+/*
 int getch(void){
   int c;
   if(buffered != 0){
@@ -278,17 +279,17 @@ int getch(void){
     buffered = 0;
   } else c = getchar();
   return c;
-}
-
+}*/
+/*
 void ungetch(int c){
   if(buffered != 0) printf("Error: Too many chars on buffer");
   else buffered = c;
-}
-/*
+}*/
+
 void ungetch(int c) {
   if(bufp >= MAXOP) printf("ungetch: too many characters \n");
   else buf[bufp++] = c;
-}*/
+}
 
 void ungets(char s[]){
   size_t len = strlen(s);
@@ -391,6 +392,98 @@ void itoa_rec(signed n, char s[]){
   s[i++] = abs(n) % 10 + '0';
   s[i] = '\0';
 }
+
+int getint(int *pn) {
+  int c, d, sign;
+
+  while(isspace(c = getch()));
+
+  if(!isdigit(c) && c != EOF && c != '+' && c != '-') {
+    ungetch(c);
+    return c;
+  }
+
+  sign = (c == '-') ? -1 : 1;
+  if(c == '+' || c == '-') {
+    d = c;
+    if(!isdigit(c = getch())){
+      if(c != EOF){
+        ungetch(c);
+      }
+      ungetch(d);
+      return 0;
+
+    }
+
+  }
+  for (*pn = 0; isdigit(c); c = getch()) {
+    *pn = 10 * *pn + (c - '0');
+  }
+
+  *pn *= sign;
+  if(c != EOF) ungetch(c);
+
+  return c;
+}
+
+
+
+int getFloat(double *pn){
+  char c;
+
+  double sign = 1;
+  
+  while(isspace(c = getch()));
+
+  if((!isdigit(c)) && c != EOF && c != '-' && c != '+' && c != '.'){
+    ungetch(c);
+    return c;
+  }
+
+  sign = (c == '-') ? -1.0 : 1.0;
+
+  if(c == '+' || c == '-'){
+    char d = c;
+    if(!isdigit(c = getch()) && c != '.'){
+      if(c != EOF){
+        ungetch(c);
+      }
+      ungetch(d);
+      return 0;
+    }
+  }
+  
+  for(*pn = 0; isdigit(c); c = getch()){
+    *pn  = *pn * 10 + ( c - '0');
+  }
+
+  int decimal = 0;
+
+  if(c == '.'){
+    while(isdigit(c = getch())){
+      ++decimal;
+      *pn = *pn * 10 + (c - '0');
+    }
+    for(; decimal > 0; decimal--) *pn = *pn / 10;
+  }
+
+
+  *pn *= sign;
+
+  if(c != EOF) ungetch(c);
+
+  return c;
+}
+
+void new_strcat(char *s, char *t){
+  while(*s)
+    s++;
+  while((*s++ = *t++));
+}
+
+
+
+
 
 
 

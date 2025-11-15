@@ -34,4 +34,9 @@ void mathfunc(char[]);
 
 void itoa_rec(signed, char[]);
 
+int getint(int *);
+int getFloat(double *);
+
+void new_strcat(char *, char *);
+
 #endif
