@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <stddef.h>
 
 void itoa(int n, char s[]){
   int i, sign;
@@ -483,7 +484,97 @@ void new_strcat(char *s, char *t){
 
 
 
+void new_strncpy(char *s, char *t, size_t n) {
+  size_t i;
+  for (i = 0; *s && i < n; i++){
+    *t++ = *s++;
+  }
+  *t = '\0';
+}
 
+void new_strncat(char *s, char *t, size_t n){
+  size_t i, j;
+
+  for(i = 0; *s && i < n; i++) s++;
+  for(j = 0; *s && *t && j < n; j++) {
+    *s++ = *t++;
+  }
+
+  *s = '\0';
+}
+
+
+#define MAXLEN 1000
+
+int getLine(char *s, int lim) {
+  char c;
+  int i;
+  
+  for(i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
+    *s++ = c;
+  }
+  if(c == '\n'){
+    *s++ = c;
+    ++i;
+  }
+  *s = '\0';
+  return i;
+
+}
+  
+int readlines(char *lineptr[], char *linestor, int maxlines) {
+  int len, nlines;
+  char *p = linestor; 
+  char line[MAXLEN];
+  char *linestop = linestor + MAXSTOR;
+
+
+  nlines = 0;
+  while((len = getline(line, MAXLEN)) > 0){
+    if(nlines >= maxlines || (p + len) >= linestop) return -1;
+    else {
+      line[len - 1] = '\0';
+      strcpy(p, line);
+      lineptr[nlines++] = p;
+      p += len;
+    }
+  }
+    return nlines;
+}
+
+
+void writelines(char * lineptr[], int nlines){
+  int i;
+  for(i = 0; i < nlines; i++) {
+    printf("%s\n", lineptr[i]);
+  }
+}
+
+void swaps(char *v[], int i , int j){
+  char *temp;
+  temp = v[i];
+  v[i] = v[j];
+  v[j] = temp;
+}
+
+void qsorts(char *v[], int left, int right) {
+  int i, last;
+
+  if(left >= right) {
+    return;
+  }
+  swaps(v, left, (left + right)/2);
+  last = left;
+  for (i = left + 1; i <= right; i++){
+    if(strcmp(v[i], v[left]) < 0) {
+      swaps(v, ++last, i);
+    }
+  }
+
+  swaps(v, left, last);
+  qsorts(v, left, last - 1);
+  qsorts(v, last + 1, right);
+}
 
 
 

@@ -61,6 +61,20 @@ int main(void)
 
   printf("new_strcat: %s\n", strcat1);
 
+  char strncpy1[] = "boston";
+  char strncpy2[7];
+
+  new_strncpy(strncpy1, strncpy2, 3);
+
+  printf("new_Strncpy: %s\n", strncpy2 );
+
+  char strncat3[] = "talcum";
+  char strncat4[] = "bot";
+
+  new_strncat(strncat3, strncat4, 3);
+
+  printf("new_strncat: %s\n", strncat3);
+
 
   return 0;
 }
