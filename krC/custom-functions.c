@@ -578,3 +578,32 @@ void qsorts(char *v[], int left, int right) {
 
 
 
+static char daytab[2][13] = {
+  {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+  {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+};
+
+int day_of_year(int year, int month, int day) {
+  bool leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+  
+  char *months = daytab[leap]+1;
+  if(year < 0 || month > 12 || month < 1 || day > daytab[leap][month] || day < 1) return -1;
+  while(--month) {
+    day += *months++;
+  }
+  return day;
+}
+
+void month_day(int year, int yearday, int *pmonth, int *pday) {
+  bool leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+  if(year < 0 && ((leap && yearday > 366) || yearday > 365) && yearday < 1) {
+    *pmonth = -1;
+    *pday = -1;
+  }
+  char *months = daytab[leap] + 1;
+  while(yearday > *months){
+    yearday -= *months++;
+  }
+  *pmonth = months - *(daytab + leap);
+  *pday = yearday;
+}

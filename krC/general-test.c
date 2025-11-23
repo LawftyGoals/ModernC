@@ -75,6 +75,18 @@ int main(void)
 
   printf("new_strncat: %s\n", strncat3);
 
+  int year = 2025;
+  int month = 11;
+  int day = 3;
+  int yearday = 360;
+  int pmonth = 0;
+  int pday = 0;
+
+  int doy = day_of_year(year, month, day);
+  month_day(year, yearday, &pmonth, &pday);
+
+  printf("day of year, 3.11.25: %d, month day 360.25: %d.%d\n", doy, pmonth, pday);
+
 
   return 0;
 }
