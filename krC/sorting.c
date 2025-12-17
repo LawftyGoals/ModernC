@@ -1,24 +1,30 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define MAXLEN 1000
 #define MAXLINES 5000
+#define NUMERIC 1
+#define REVERSE 2
+#define FOLD 4
+#define DIRECTORY 8
+
 char *lineptr[MAXLINES];
 
+static short options = 0;
+
 int readlines(char *lineptr[], int nlines);
-void writelines(char *lineptr[], int nlines, int reverse);
+void writelines(char *lineptr[], int nlines);
 int getLine(char *, int);
 int numcmp(const char *, const char *);
-void toLowerCase(char *);
+int charCompare(const char*, const char*);
+int toLower(char);
 
-void qSort(void *lineptr[], int fold,  int left, int right, int (*comp)(const void *, const void *));
+void qSort(void *lineptr[], int left, int right, int (*comp)(const void *, const void *));
 
 int main(int argc, char *argv[]){
   int nlines;
-  int numeric = 0;
-  int reverse = 0;
-  int fold = 0;
   int argcount = argc;
 
   while(--argcount > 0){
@@ -27,15 +33,19 @@ int main(int argc, char *argv[]){
       while((c = *++argv[0])){
         switch(c) {
           case 'n':
-            numeric = 1;
+            options |= NUMERIC;
             break;
           case 'r':
-            reverse = 1;
+            options |= REVERSE;
             break;
           case 'f':
-            fold = 1;
+            options |= FOLD;
+            break;
+          case 'd':
+            options |= DIRECTORY;
             break;
           default:
+            argcount = 1;
             printf("unrecognized argument %c\n", c);
             break;
           }
@@ -43,15 +53,51 @@ int main(int argc, char *argv[]){
     }
   }
 
-  if((nlines = readlines(lineptr, MAXLINES)) >= 0){
-    qSort((void **) lineptr, fold, 0, nlines-1, (int (*)(const void *, const void *))(numeric ? numcmp : strcmp));
-    writelines(lineptr, nlines, reverse);
+  if(argcount) {
+    printf("invalid argument usage: -dfnr\n");
+    return 1;
+  } else if ((nlines = readlines(lineptr, MAXLINES)) >= 0){
+    if(NUMERIC & options)
+      qSort((void **) lineptr, 0, nlines-1, (int (*)(const void *, const void*))numcmp);
+    else
+      qSort((void **) lineptr, 0, nlines-1, (int (*)(const void *, const void*))charCompare);
+    writelines(lineptr, nlines);
     return 0;
   } else {
     printf("input too big for sort\n");
     return 1;
   }
 }
+
+
+int charCompare(const char *s, const char *t){
+
+  char a, b;
+
+  int fold = FOLD & options;
+  int directory = DIRECTORY & options;
+  do {
+    if(directory){
+      while(!isalnum(*s) && *s != ' ' && *s != '\0') s++;
+      while(!isalnum(*t) && *t != ' ' && *t != '\0') t++;
+    }
+
+    a = fold ? toLower(*s) : *s;
+    s++;
+    b = fold ? toLower(*t) : *t;
+    t++;
+
+    if(a == '\0' && a == b) return 0;
+  } while(a == b);
+  
+  return a - b;
+
+}
+
+int toLower(char c){
+  return c >= 'A' && c <= 'Z' ? c + 32 : c;
+}
+
 
 int readlines(char *lptr[], int maxlines){
   int len, nlines;
@@ -71,9 +117,9 @@ int readlines(char *lptr[], int maxlines){
   return nlines;
 }
 
-void writelines(char *lptr[], int nlines, int reverse){
+void writelines(char *lptr[], int nlines){
   int i;
-  if(reverse) {
+  if(options & REVERSE) {
     for(i = nlines-1; i >= 0; i--) {
       printf("%s\n", lptr[i]);
     }
@@ -86,7 +132,7 @@ void writelines(char *lptr[], int nlines, int reverse){
 }
 
 
-void qSort(void *v[], int fold, int left, int right, int (*comp)(const void *, const void *)){
+void qSort(void *v[], int left, int right, int (*comp)(const void *, const void *)){
   int i, last;
   void swap(void *v[], int, int);
 
@@ -94,38 +140,17 @@ void qSort(void *v[], int fold, int left, int right, int (*comp)(const void *, c
   swap(v, left, (left + right)/2);
   last = left;
 
-  if(fold) {
-    char sleft[MAXLEN]; 
-    strcpy(sleft, v[left]);
-    toLowerCase(sleft);
-    for(i = left + 1; i <= right; i++){
-      char si[MAXLEN];
-      strcpy(si, v[i]);
-      toLowerCase(si);
-      if((*comp)(si, sleft) < 0){
-        swap(v, ++last, i);
-      }
-    }
-  } else {
-    for(i = left + 1; i <= right; i++){
-      if((*comp)(v[i], v[left]) < 0) {
-        swap(v, ++last, i);
-      }
+  for(i = left + 1; i <= right; i++){
+    if((*comp)(v[i], v[left]) < 0) {
+      swap(v, ++last, i);
     }
   }
+  
   swap(v, left, last);
-  qSort(v, fold, left, last-1, comp);
-  qSort(v, fold, last+1, right, comp);
+  qSort(v, left, last-1, comp);
+  qSort(v, last+1, right, comp);
 }
 
-void toLowerCase(char *s){
-  size_t i;
-  for(i = 0; s[i] != '\0'; i++){
-    if(s[i] >= 'A' && s[i] <= 'Z') {
-      s[i] += 32;
-    }
-  }
-}
 
 void swap(void *v[], int i, int j){
   void *temp;
