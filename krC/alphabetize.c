@@ -1,4 +1,4 @@
-
+#include <stddef.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,6 +13,7 @@ void ungetch(char);
 int getword(char *s, int lim);
 char *mallocword(char *);
 int binsearch(char**, size_t, char*);
+char *binsearchp(char**, size_t, char*);
 
 
 size_t LIST_LEN = 7;
@@ -24,8 +25,12 @@ int main(void) {
   char fl;
   int i = 0;
 
+  char *wordli;
+
   while((fl = getword(word, MAXINPLIM)) != EOF){
     printf("%d\n", binsearch(DATA_TYPES, LIST_LEN-1, word));
+    if((wordli = binsearchp(DATA_TYPES, LIST_LEN-1, word)) != NULL)
+      printf("%s\n", wordli);
     i++;
   }
 
@@ -41,6 +46,26 @@ char* mallocword(char *word){
   
   return pword;
 }
+
+char *binsearchp(char* list[], size_t listlen, char *word){
+  char **start = list;
+  char **end = list + listlen;
+  char **mid;
+  int cond;
+
+  while(start <= end){
+    mid = start + (end - start) / 2;
+    if((cond = strcmp(word, *mid)) < 0)
+      end = mid;
+    else if(cond > 0)
+      start = mid + 1;
+    else
+      return *mid;
+  }
+
+  return NULL;
+}
+
 
 //listlen = length of list - 1
 int binsearch(char *list[], size_t listlen, char *word){
@@ -61,10 +86,7 @@ int binsearch(char *list[], size_t listlen, char *word){
 
   return -1;
 }
-
-
-
-    
+ 
 
 
 
