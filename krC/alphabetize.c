@@ -15,6 +15,8 @@ char *mallocword(char *);
 int binsearch(char**, size_t, char*);
 char *binsearchp(char**, size_t, char*);
 
+struct variablekey { char *word; size_t count; struct variablekey *left; struct variablekey *right;};
+
 
 size_t LIST_LEN = 7;
 char *DATA_TYPES[] = { "bool", "char", "double", "float", "int", "long", "short" };
