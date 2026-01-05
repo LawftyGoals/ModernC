@@ -23,22 +23,46 @@ char *DATA_TYPES[] = { "bool", "char", "double", "float", "int", "long", "short"
 
 int main(void) {
   //char *words[MAXINPLIM];
-  char word[MAXINPLIM];
+  char *variables[MAXINPLIM];
+  //char word[MAXINPLIM];
+  struct variablkey rootkey;
   char fl;
   int i = 0;
+
+
+  struct variablekey rootnode;
 
   char *wordli;
 
   while((fl = getword(word, MAXINPLIM)) != EOF){
-    printf("%d\n", binsearch(DATA_TYPES, LIST_LEN-1, word));
-    if((wordli = binsearchp(DATA_TYPES, LIST_LEN-1, word)) != NULL)
+    //printf("%d\n", binsearch(DATA_TYPES, LIST_LEN-1, word));
+    if((wordli = binsearchp(DATA_TYPES, LIST_LEN-1, word)) != NULL){
       printf("%s\n", wordli);
+      while((fl = getword(word, MAXINPLIM)) != EOF && (wordli = binsearchp(DATA_TYPES, LIST_LEN-1, word)) != NULL);
+      
+    }
     i++;
   }
 
   return 0;
 }
 
+struct variablekey *addNode(char *s, struct variablekey *p){
+  int cond;
+  if(p == NULL){
+    p = keyalloc();
+    p->word = mallocword(s);
+    p->count = 1;
+    p->left = p-right = NULL;
+  } else if ((cond = strcmp(s, p->word)) == 0) {
+    p-count++;
+  } else if (cond < 0) {
+    p->left = addtree(p->left, s);
+  } else {
+    p->right = addtree(p->right, s);
+  }
+  return p;
+}
 
 char* mallocword(char *word){
   char *pword = (char *) malloc(strlen(word) + 1);
