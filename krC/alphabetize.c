@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdint.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -8,7 +9,7 @@
 #define MAXCHARBUFF 1000
 #define MAXINPLIM 1000
 #define MAXWORD 100
-#define DEFAULTGROUPER 6
+#define DEFAULTGROUPER 2
 
 char getch(void);
 void ungetch(char);
@@ -21,6 +22,7 @@ struct variablekey *keymalloc(void);
 struct variablekey *addnode(char *, struct variablekey *);
 
 void printtree(struct variablekey *);
+void printvertical(struct variablekey *);
 
 struct variablekey
 {
@@ -32,10 +34,12 @@ struct variablekey
   struct variablekey *down;
 };
 
+uint16_t grouper = DEFAULTGROUPER;
+
 size_t LIST_LEN = 7;
 char *DATA_TYPES[] = {"bool", "char", "double", "float", "int", "long", "short"};
 
-int main(void)
+int main(int argc, char *argv[])
 {
   // char *words[MAXINPLIM];
   // char *variables[MAXINPLIM];
@@ -46,6 +50,11 @@ int main(void)
 
   char *wordli;
   bool isvariable = false;
+
+  if(argc > 1 && isdigit(*argv[1])){
+    printf("%s\n", argv[1]);
+    grouper = atoi(argv[1]);
+  }
 
   while ((fl = getword(word, MAXINPLIM)) != EOF)
   {
@@ -71,14 +80,24 @@ void printtree(struct variablekey *rootkey)
   if (rootkey != NULL)
   {
     printtree(rootkey->left);
-    printf("%s\n", rootkey->word);
+    if(rootkey->count >= grouper)printvertical(rootkey);
     printtree(rootkey->right);
   }
 }
 
+void printvertical(struct variablekey *rootkey){
+  if(rootkey != NULL){
+    printvertical(rootkey->down);
+    printf("%s\n", rootkey->word);
+    printvertical(rootkey->up);
+  }
+}
+    
+
 struct variablekey *addnode(char *s, struct variablekey *p)
 {
   int cond;
+  int vertcond;
   if (p == NULL)
   {
     p = keymalloc();
@@ -86,9 +105,19 @@ struct variablekey *addnode(char *s, struct variablekey *p)
     p->count = 1;
     p->up = p->down = p->left = p->right = NULL;
   }
-  else if ((cond = strcmp(s, p->word)) == 0)
+  else if ((cond = strncmp(s, p->word, grouper)) == 0)
   {
-    p->count++;
+    if((vertcond = strcmp(s, p->word)) != 0){
+      printf("add - %s\n", s);
+
+      if(vertcond > 0) {
+        p->up = addnode(s, p->up);
+      } else if (vertcond < 0) {
+        p->down = addnode(s, p->down);
+      }
+
+      p->count++;
+    }
   }
   else if (cond < 0)
   {
