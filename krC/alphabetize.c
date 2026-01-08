@@ -8,6 +8,7 @@
 #define MAXCHARBUFF 1000
 #define MAXINPLIM 1000
 #define MAXWORD 100
+#define DEFAULTGROUPER 6
 
 char getch(void);
 void ungetch(char);
@@ -27,6 +28,8 @@ struct variablekey
   size_t count;
   struct variablekey *left;
   struct variablekey *right;
+  struct variablekey *up;
+  struct variablekey *down;
 };
 
 size_t LIST_LEN = 7;
@@ -58,7 +61,6 @@ int main(void)
     }
     i++;
   }
-  printf("outofwhile\n");
   printtree(rootkey);
 
   return 0;
@@ -82,7 +84,7 @@ struct variablekey *addnode(char *s, struct variablekey *p)
     p = keymalloc();
     p->word = mallocword(s);
     p->count = 1;
-    p->left = p->right = NULL;
+    p->up = p->down = p->left = p->right = NULL;
   }
   else if ((cond = strcmp(s, p->word)) == 0)
   {
