@@ -8,7 +8,8 @@ int main(void){
   char *test1 = "abcd";
   char *test2 = "abde";
 
-  printf("%d\n", strncmp(test1, test2, 3));
+  printf("abcd - abde : %d\n", strcmp(test1, test2));
+  printf("abde - abcd : %d\n", strcmp(test2, test1));
 
   return 0;
 }
