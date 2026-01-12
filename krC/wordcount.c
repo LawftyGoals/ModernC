@@ -16,7 +16,8 @@ void ungetch(char);
 char getword(char *, uint16_t);
 char *stralloc(char *);
 
-struct linenode {
+struct linenode
+{
   uint16_t linenr;
   struct linenode *nextlinenr;
 };
@@ -40,7 +41,6 @@ void linenrprint(struct linenode *);
 
 char *stopwords[STOPWORDCOUNT] = {"a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can", "did", "do", "does", "doing", "don", "down", "during", "each", "few", "for", "from", "further", "had", "has", "have", "having", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how", "i", "if", "in", "into", "is", "it", "its", "itself", "just", "me", "more", "most", "my", "myself", "no", "nor", "not", "now", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own", "same", "she", "should", "so", "some", "such", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "will", "with", "you", "your", "yours", "yourself", "yourselves"};
 
-
 uint16_t globallinenr = 1;
 
 int main(int argc, char *argv[])
@@ -52,7 +52,9 @@ int main(int argc, char *argv[])
 
   while ((wordchar = getword(word, MAXWORDSIZE)) != EOF)
   {
-    if (!binarywordsearch(word, stopwords, STOPWORDCOUNT - 1))
+    if(wordchar == '\n')
+      globallinenr++;
+    else if (!binarywordsearch(word, stopwords, STOPWORDCOUNT - 1))
       root = addnode(word, root);
   }
 
@@ -72,9 +74,11 @@ void treeprint(struct wordnode *node)
   }
 }
 
-void linenrprint(struct linenode *root){
+void linenrprint(struct linenode *root)
+{
   struct linenode *ln = root;
-  while(ln->nextlinenr != nullptr){
+  while (ln->nextlinenr != nullptr)
+  {
     printf("%d, ", ln->linenr);
     ln = ln->nextlinenr;
   }
@@ -100,7 +104,8 @@ struct wordnode *addnode(char *w, struct wordnode *startnode)
 
   else if (cond > 0)
     startnode->left = addnode(w, startnode->left);
-  else{
+  else
+  {
     startnode->count++;
     addlinenode(startnode->linenr, globallinenr);
   }
@@ -108,11 +113,16 @@ struct wordnode *addnode(char *w, struct wordnode *startnode)
   return startnode;
 }
 
-void addlinenode(struct linenode *ln, uint16_t linenr){
-  if(ln->linenr != linenr){
-    if(ln->nextlinenr == nullptr){
+void addlinenode(struct linenode *ln, uint16_t linenr)
+{
+  if (ln->linenr != linenr)
+  {
+    if (ln->nextlinenr == nullptr)
+    {
       ln->nextlinenr = linenralloc(linenr);
-    } else {
+    }
+    else
+    {
       addlinenode(ln->nextlinenr, linenr);
     }
   }
@@ -127,14 +137,14 @@ char *stralloc(char *s)
   return dest;
 }
 
-struct linenode *linenralloc(uint16_t linenr){
+struct linenode *linenralloc(uint16_t linenr)
+{
 
   struct linenode *ln = (struct linenode *)malloc(sizeof(struct linenode));
   ln->linenr = linenr;
   ln->nextlinenr = nullptr;
   return ln;
 }
-
 
 struct wordnode *nodealloc(void)
 {
@@ -185,8 +195,15 @@ char getword(char *tw, uint16_t lim)
   char *lw = tw;
   uint16_t idx = 0;
 
-  while (isspace(c = getch()) && !isalpha(c) && c != EOF)
+  while (isspace(c = getch()) && !isalpha(c) && c != EOF && c != '\n')
     ;
+
+  if (c == '\n')
+  {
+    *lw = c;
+    *++lw = '\0';
+    return c;
+  }
 
   if (c == EOF)
   {
@@ -206,7 +223,8 @@ char getword(char *tw, uint16_t lim)
       idx++;
     }
 
-    if(*lw == '\n') globallinenr++;
+    if (*lw == '\n')
+      ungetch('\n');
 
     *lw = '\0';
   }
