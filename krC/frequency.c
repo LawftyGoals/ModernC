@@ -20,13 +20,18 @@ struct wordnode {
 char *wordalloc(char *word);
 struct wordnode *wnalloc(void);
 
-struct wordnode *addwordnode(struct wordnode *node, char *word, size_t *wordcount);
+struct wordnode *addwordnode(struct wordnode *node, char *word,
+                             size_t *wordcount);
 
 void treeprint(struct wordnode *node);
 void treetoarray(struct wordnode *node, struct wordnode *nodes[]);
 
-void myqsort(int v[], int left, int right);
-void myswap(int v[], int i, int j);
+void myqsort(struct wordnode *v[], int left, int right);
+void myswap(struct wordnode *v[], int i, int j);
+
+void addToArray(struct wordnode *nodee, struct wordnode *wordlist[],
+                size_t *idx);
+void printbycount(struct wordnode *node, size_t wordcount);
 
 int main(void) {
   char word[MAXWORDLEN];
@@ -40,33 +45,32 @@ int main(void) {
   printf("%lu\n", wordcount);
 
   treeprint(root);
+  printbycount(root, wordcount);
 
   return 0;
 }
 
-
-void printbycount(struct wordnode *node, size_t wordcount){
+void printbycount(struct wordnode *node, size_t wordcount) {
   struct wordnode *wordlist[wordcount];
 
   size_t idx = 0;
-  addToArray(node, wordlist, idx);
+  addToArray(node, wordlist, &idx);
 
-  myqsort(wordlist, 0, wordcount-1);
-  for(size_t i = 0; i < wordcount; i++){
+  myqsort(wordlist, 0, wordcount - 1);
+  for (size_t i = 0; i < wordcount; i++) {
     printf("%d - %s\n", wordlist[i]->count, wordlist[i]->word);
   }
 }
 
-void addToArray(struct wordnode *node, struct wordnode *wordlist[], size_t *idx){
-  if(node != nullptr){
-    addToArray(node->left, wordList, idx);
-    (*idx)++;
-    wordList[idx] = node;
-    addToArray(node->right, wordList, idx);
+void addToArray(struct wordnode *node, struct wordnode *wordlist[],
+                size_t *idx) {
+  if (node != nullptr) {
+    addToArray(node->left, wordlist, idx);
+    wordlist[*idx] = node;
+    ++(*idx);
+    addToArray(node->right, wordlist, idx);
   }
 }
-  
-
 
 void treeprint(struct wordnode *node) {
   if (node != nullptr) {
@@ -76,7 +80,8 @@ void treeprint(struct wordnode *node) {
   }
 }
 
-struct wordnode *addwordnode(struct wordnode *node, char *word, size_t *wordcount) {
+struct wordnode *addwordnode(struct wordnode *node, char *word,
+                             size_t *wordcount) {
   int cond;
   if (node == nullptr) {
     node = wnalloc();
@@ -140,25 +145,24 @@ char getword(char *word, uint16_t lim) {
   return *word;
 }
 
-
-void myqsort(int v[], int left, int right){
+void myqsort(struct wordnode *v[], int left, int right) {
   int i, last;
 
-  if(left >= right)
+  if (left >= right)
     return;
-  myswap(v, left, (left + right)/2);
+  myswap(v, left, (left + right) / 2);
   last = left;
-  for(i = left + 1; i <= right; i++){
-    if(v[i] < v[left])
+  for (i = left + 1; i <= right; i++) {
+    if (v[i]->count > v[left]->count)
       myswap(v, ++last, i);
   }
   myswap(v, left, last);
-  myqsort(v, left, last-1);
-  myqsort(v, last+1, right);
+  myqsort(v, left, last - 1);
+  myqsort(v, last + 1, right);
 }
 
-void myswap(int v[], int i, int j){
-  int temp;
+void myswap(struct wordnode *v[], int i, int j) {
+  struct wordnode *temp;
 
   temp = v[i];
   v[i] = v[j];
