@@ -55,6 +55,10 @@ struct nlist *install(char *name, char *defn){
     free((void*) np->defn);
   if((np->defn = strdup(defn)) == NULL)
     return NULL;
+  return np;
+}
+
+
 
 
 
